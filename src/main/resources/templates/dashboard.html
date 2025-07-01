@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Employee Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="bi bi-people-fill me-2"></i>Employee Management
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active" th:href="@{/dashboard}">Dashboard</a>
+                <a class="nav-link" th:href="@{/employees}">Employees</a>
+                <a class="nav-link" th:href="@{/employees/add}">Add Employee</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+                <p class="text-muted">Overview of your employee management system</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Employees
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalEmployees}">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-people fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Average Salary
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="'$' + ${averageSalary}">$0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-currency-dollar fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Departments
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(departments)}">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-building fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    New This Month
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    <span th:text="${#lists.size(recentEmployees)}">0</span>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-person-plus fs-2 text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Employees -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="bi bi-clock-history me-2"></i>Recent Employees
+                        </h6>
+                        <a th:href="@{/employees}" class="btn btn-sm btn-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(recentEmployees)}" class="text-center py-4">
+                            <i class="bi bi-inbox display-4 text-muted"></i>
+                            <p class="text-muted mt-2">No employees yet</p>
+                            <a th:href="@{/employees/add}" class="btn btn-primary">Add First Employee</a>
+                        </div>
+                        
+                        <div th:if="${!#lists.isEmpty(recentEmployees)}">
+                            <div th:each="employee : ${recentEmployees}" class="d-flex align-items-center mb-3">
+                                <div class="avatar-circle me-3" 
+                                     th:text="${employee.firstName?.substring(0,1)?.toUpperCase()}">A</div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold" th:text="${employee.fullName}">John Doe</div>
+                                    <small class="text-muted" th:text="${employee.department}">IT Department</small>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted" th:text="${#temporals.format(employee.hireDate, 'MMM dd')}">Jan 15</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Overview -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="bi bi-building me-2"></i>Departments
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(departments)}" class="text-center py-4">
+                            <i class="bi bi-building display-4 text-muted"></i>
+                            <p class="text-muted mt-2">No departments yet</p>
+                        </div>
+                        
+                        <div th:if="${!#lists.isEmpty(departments)}">
+                            <div th:each="department : ${departments}" class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <i class="bi bi-building me-2 text-primary"></i>
+                                    <span th:text="${department}">Department Name</span>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="bi bi-lightning me-2"></i>Quick Actions
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <a th:href="@{/employees/add}" class="btn btn-outline-primary btn-lg w-100">
+                                    <i class="bi bi-person-plus d-block fs-2 mb-2"></i>
+                                    Add Employee
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a th:href="@{/employees}" class="btn btn-outline-info btn-lg w-100">
+                                    <i class="bi bi-people d-block fs-2 mb-2"></i>
+                                    View All
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a th:href="@{/employees?search=}" class="btn btn-outline-warning btn-lg w-100">
+                                    <i class="bi bi-search d-block fs-2 mb-2"></i>
+                                    Search
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/api/employees" target="_blank" class="btn btn-outline-success btn-lg w-100">
+                                    <i class="bi bi-code-slash d-block fs-2 mb-2"></i>
+                                    API Access
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+        .border-left-primary {
+            border-left: 0.25rem solid #4e73df !important;
+        }
+        .border-left-success {
+            border-left: 0.25rem solid #1cc88a !important;
+        }
+        .border-left-info {
+            border-left: 0.25rem solid #36b9cc !important;
+        }
+        .border-left-warning {
+            border-left: 0.25rem solid #f6c23e !important;
+        }
+        .text-gray-300 {
+            color: #dddfeb !important;
+        }
+        .text-gray-800 {
+            color: #5a5c69 !important;
+        }
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .text-xs {
+            font-size: 0.7rem;
+        }
+    </style>
+</body>
+</html>
+                

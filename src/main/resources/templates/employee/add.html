@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employee - Employee Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="bi bi-people-fill me-2"></i>Employee Management
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                <a class="nav-link" th:href="@{/employees}">Employees</a>
+                <a class="nav-link active" th:href="@{/employees/add}">Add Employee</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2><i class="bi bi-person-plus me-2"></i>Add New Employee</h2>
+                <p class="text-muted">Fill in the details to add a new employee to the system</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a th:href="@{/employees}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                </a>
+            </div>
+        </div>
+
+        <!-- Employee Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-person-badge me-2"></i>Employee Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/employees/add}" th:object="${employee}" method="post">
+                            <div class="row">
+                                <!-- First Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">
+                                        <i class="bi bi-person me-1"></i>First Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           id="firstName"
+                                           th:field="*{firstName}" 
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''"
+                                           placeholder="Enter first name">
+                                    <div th:if="${#fields.hasErrors('firstName')}" 
+                                         class="invalid-feedback"
+                                         th:errors="*{firstName}">First name error</div>
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label">
+                                        <i class="bi bi-person me-1"></i>Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           id="lastName"
+                                           th:field="*{lastName}" 
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
+                                           placeholder="Enter last name">
+                                    <div th:if="${#fields.hasErrors('lastName')}" 
+                                         class="invalid-feedback"
+                                         th:errors="*{lastName}">Last name error</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Email -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="bi bi-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" 
+                                           id="email"
+                                           th:field="*{email}" 
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                           placeholder="Enter email address">
+                                    <div th:if="${#fields.hasErrors('email')}" 
+                                         class="invalid-feedback"
+                                         th:errors="*{email}">Email error</div>
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">
+                                        <i class="bi bi-telephone me-1"></i>Phone Number
+                                    </label>
+                                    <input type="tel" 
+                                           id="phone"
+                                           th:field="*{phone}" 
+                                           class="form-control"
+                                           placeholder="Enter phone number">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Department -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="department" class="form-label">
+                                        <i class="bi bi-building me-1"></i>Department <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="department"
+                                            th:field="*{department}" 
+                                            class="form-select"
+                                            th:classappend="${#fields.hasErrors('department')} ? 'is-invalid' : ''">
+                                        <option value="">Select Department</option>
+                                        <option value="Information Technology">Information Technology</option>
+                                        <option value="Human Resources">Human Resources</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="Operations">Operations</option>
+                                        <option value="Customer Service">Customer Service</option>
+                                        <option th:each="dept : ${departments}" 
+                                                th:value="${dept}" 
+                                                th:text="${dept}"
+                                                th:if="${!#lists.contains({'Information Technology', 'Human Resources', 'Finance', 'Marketing', 'Sales', 'Operations', 'Customer Service'}, dept)}">Custom Department</option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('department')}" 
+                                         class="invalid-feedback"
+                                         th:errors="*{department}">Department error</div>
+                                </div>
+
+                                <!-- Salary -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="salary" class="form-label">
+                                        <i class="bi bi-currency-dollar me-1"></i>Annual Salary <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" 
+                                               id="salary"
+                                               th:field="*{salary}" 
+                                               class="form-control"
+                                               th:classappend="${#fields.hasErrors('salary')} ? 'is-invalid' : ''"
+                                               placeholder="50000"
+                                               min="0"
+                                               step="0.01">
+                                        <div th:if="${#fields.hasErrors('salary')}" 
+                                             class="invalid-feedback"
+                                             th:errors="*{salary}">Salary error</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between pt-3 border-top">
+                                <a th:href="@{/employees}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-2"></i>Add Employee
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Format salary input
+        document.getElementById('salary').addEventListener('input', function(e) {
+            let value = e.target.value;
+            if (value) {
+                // Remove any non-digit characters except decimal point
+                value = value.replace(/[^\d.]/g, '');
+                e.target.value = value;
+            }
+        });
+
+        // Form validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+</html>
